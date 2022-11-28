@@ -9,7 +9,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module("asta",
+var Module = fx.Options(,
 	httpfx.Module,
 	loggerfx.Module,
 	metricsfx.Module,
