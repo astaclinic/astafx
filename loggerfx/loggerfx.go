@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var Module = fx.Module("logger",
+var Module = fx.Options(
 	fx.Provide(New),
 	fx.WithLogger(func(logger *zap.SugaredLogger) fxevent.Logger {
 		return &fxevent.ZapLogger{Logger: logger.Desugar()}
