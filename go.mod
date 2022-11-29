@@ -13,6 +13,7 @@ require (
 	go.uber.org/fx v1.18.2
 	go.uber.org/zap v1.23.0
 	google.golang.org/grpc v1.31.0
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gorm.io/driver/postgres v1.4.5
 	gorm.io/gorm v1.24.2
 	gorm.io/plugin/prometheus v0.0.0-20221017063443-7949f253c4db

@@ -10,6 +10,7 @@ import (
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var Module = fx.Options(
@@ -30,11 +31,10 @@ func New(config *LoggerConfig) (*zap.SugaredLogger, error) {
 		return nil, fmt.Errorf("error in creating log file folder for writing: %w", err)
 	}
 
-	// open a new file
-	logFile, err := os.OpenFile(path.Join(config.Path, "latest.log"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("error in opening log file for writing: %w", err)
-	}
+	// create a new writer for log rotation
+	fileWriter := zapcore.AddSync(&lumberjack.Logger{
+		Filename: path.Join(config.Path, "server.log"),
+	})
 
 	// setting the log level for file/console log output
 	fileLogLevel := zapcore.InfoLevel // enable if level >= info, can change to any predicate accepting a level argument
@@ -67,7 +67,7 @@ func New(config *LoggerConfig) (*zap.SugaredLogger, error) {
 	// create the two cores for the logger
 	// when writing to a file, the *os.File need to be locked with Lock() for concurrent access
 	core := zapcore.NewTee(
-		zapcore.NewCore(fileEncoder, zapcore.Lock(logFile), fileLogLevel),
+		zapcore.NewCore(fileEncoder, fileWriter, fileLogLevel),
 		zapcore.NewCore(consoleEncoder, zapcore.Lock(os.Stdout), consoleLogLevel),
 	)
 
