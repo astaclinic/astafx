@@ -20,7 +20,7 @@ var Module = fx.Options(
 )
 
 type LoggerConfig struct {
-	Path string `mapstructure:"path"`
+	Path string `mapstructure:"path" validate:"required,dir"`
 }
 
 func New(config *LoggerConfig) (*zap.SugaredLogger, error) {

@@ -12,8 +12,8 @@ var Module = fx.Module("redis",
 )
 
 type RedisConfig struct {
-	Dsn      string `mapstructure:"dsn"`
-	Password string `mapstructure:"password"`
+	Dsn      string `mapstructure:"dsn" validate:"required,hostname"`
+	Password string `mapstructure:"password" validate:"required,printascii"`
 }
 
 func New(config *RedisConfig) (*redis.Client, error) {

@@ -9,7 +9,7 @@ import (
 )
 
 type SentryConfig struct {
-	Dsn string `mapstructure:"dsn"`
+	Dsn string `mapstructure:"dsn" validate:"required,uri"`
 }
 
 func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {

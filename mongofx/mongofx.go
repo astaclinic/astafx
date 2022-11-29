@@ -9,7 +9,7 @@ import (
 )
 
 type MongoConfig struct {
-	Dsn string `mapstructure:"dsn"`
+	Dsn string `mapstructure:"dsn" validate:"required,uri"`
 }
 
 func NewMongoClient(config *MongoConfig) (*mongo.Client, error) {

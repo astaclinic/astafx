@@ -18,7 +18,7 @@ var Module = fx.Module("grpc",
 )
 
 type GrpcConfig struct {
-	ListenAddr string `mapstructure:"listen_addr"`
+	ListenAddr string `mapstructure:"listen_addr" validate:"required,hostname_port"`
 }
 
 func NewGrpcServer() *grpc.Server {
