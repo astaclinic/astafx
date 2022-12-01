@@ -9,7 +9,7 @@ import (
 )
 
 type PostgresConfig struct {
-	Dsn string `mapstructure:"dsn" validate:"required,uri"`
+	Dsn string `mapstructure:"dsn" yaml:"dsn"  validate:"required,uri"`
 }
 
 type Params struct {

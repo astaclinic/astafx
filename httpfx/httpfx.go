@@ -14,7 +14,7 @@ var Module = fx.Module("http",
 )
 
 type HttpConfig struct {
-	ListenAddr string `mapstructure:"listen_addr" required:"required,hostname_port"`
+	ListenAddr string `mapstructure:"listen_addr" yaml:"listen_addr"  required:"required,hostname_port"`
 }
 
 type HttpParams struct {
