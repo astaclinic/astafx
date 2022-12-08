@@ -39,7 +39,11 @@ type RunHttpParams struct {
 func RunHttpServer(p RunHttpParams) {
 	p.Lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
-			go p.HttpServer.ListenAndServe()
+			go func() {
+				if err := p.HttpServer.ListenAndServe(); err != nil {
+					panic(err)
+				}
+			}()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {

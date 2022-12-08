@@ -41,7 +41,11 @@ func RunGrpcServer(p RunGrpcServerParams) {
 			if err != nil {
 				return err
 			}
-			go p.GrpcServer.Serve(lis)
+			go func() {
+				if err := p.GrpcServer.Serve(lis); err != nil {
+					panic(err)
+				}
+			}()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {

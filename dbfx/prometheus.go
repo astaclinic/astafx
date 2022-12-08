@@ -5,8 +5,8 @@ import (
 	"gorm.io/plugin/prometheus"
 )
 
-func SetupGormPrometheus(db *gorm.DB) {
-	db.Use(prometheus.New(prometheus.Config{
+func SetupGormPrometheus(db *gorm.DB) error {
+	return db.Use(prometheus.New(prometheus.Config{
 		StartServer: false,
 	}))
 }

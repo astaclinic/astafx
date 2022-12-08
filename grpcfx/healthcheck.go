@@ -7,5 +7,5 @@ import (
 )
 
 func registerHealthCheckGrpcServer(grpcServer *grpc.Server, healthCheck *health.Server) {
-	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
+	grpc_health_v1.RegisterHealthServer(grpcServer, healthCheck)
 }

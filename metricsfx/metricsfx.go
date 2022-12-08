@@ -1,8 +1,9 @@
 package metricsfx
 
 import (
-	"github.com/astaclinic/astafx/routerfx"
 	"go.uber.org/fx"
+
+	"github.com/astaclinic/astafx/routerfx"
 )
 
 var Module = fx.Module("metrics",
