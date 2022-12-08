@@ -49,7 +49,7 @@ func Info(message string) error {
 }
 
 func Infof(format string, a ...any) error {
-	return Info(fmt.Sprintf(format, a))
+	return Info(fmt.Sprintf(format, a...))
 }
 
 func Warn(message string) error {
@@ -57,7 +57,7 @@ func Warn(message string) error {
 }
 
 func Warnf(format string, a ...any) error {
-	return Warn(fmt.Sprintf(format, a))
+	return Warn(fmt.Sprintf(format, a...))
 }
 
 func Fatal(message string) error {
@@ -65,5 +65,5 @@ func Fatal(message string) error {
 }
 
 func Fatalf(format string, a ...any) error {
-	return Fatal(fmt.Sprintf(format, a))
+	return Fatal(fmt.Sprintf(format, a...))
 }
