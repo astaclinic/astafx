@@ -12,13 +12,7 @@ import (
 )
 
 func InitConfig() {
-	buildInfo, ok := debug.ReadBuildInfo()
-	packageName := "asta"
-	if ok {
-		packageName = path.Base(buildInfo.Path)
-	} else {
-		logger.Warnf("Fail to read package info")
-	}
+	packageName := GetPackageName()
 	logger.Infof("Loading config for package %s", packageName)
 
 	viper.SetConfigName("config")
@@ -40,4 +34,15 @@ func InitConfig() {
 	if err != nil {
 		logger.Warnf("Error in reading config. %v", err)
 	}
+}
+
+func GetPackageName() string {
+	buildInfo, ok := debug.ReadBuildInfo()
+	packageName := "asta"
+	if ok {
+		packageName = path.Base(buildInfo.Path)
+	} else {
+		logger.Warnf("Fail to read package info")
+	}
+	return packageName
 }

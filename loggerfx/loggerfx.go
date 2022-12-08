@@ -13,6 +13,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 
+	"github.com/astaclinic/astafx/config"
 	"github.com/astaclinic/astafx/logger"
 )
 
@@ -30,7 +31,7 @@ type LoggerConfig struct {
 func init() {
 	// config must have a default value for viper to load config from env variables
 	// default value of empty string (zero value) will not pass the "required" config validation
-	viper.SetDefault("log.path", "/var/log/asta")
+	viper.SetDefault("logs.path", path.Join("/var/log", config.GetPackageName()))
 }
 
 func New(config *LoggerConfig) (*zap.SugaredLogger, error) {
