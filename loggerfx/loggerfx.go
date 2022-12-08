@@ -12,6 +12,8 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/astaclinic/astafx/logger"
 )
 
 var Module = fx.Options(
@@ -52,13 +54,13 @@ func New(config *LoggerConfig) (*zap.SugaredLogger, error) {
 	fileEncoder := zapcore.NewJSONEncoder(fileEncoderConfig)
 	consoleEncoderConfig := zap.NewProductionEncoderConfig()
 	colorMap := map[zapcore.Level]*color.Color{
-		zapcore.DebugLevel:  color.New(color.FgMagenta),
-		zapcore.InfoLevel:   color.New(color.FgBlue),
-		zapcore.WarnLevel:   color.New(color.FgYellow),
-		zapcore.ErrorLevel:  color.New(color.FgRed),
-		zapcore.DPanicLevel: color.New(color.FgRed, color.Bold),
-		zapcore.FatalLevel:  color.New(color.FgRed, color.Bold),
-		zapcore.PanicLevel:  color.New(color.FgRed, color.Bold),
+		zapcore.DebugLevel:  logger.DebugColor,
+		zapcore.InfoLevel:   logger.InfoColor,
+		zapcore.WarnLevel:   logger.WarnColor,
+		zapcore.ErrorLevel:  logger.ErrorColor,
+		zapcore.DPanicLevel: logger.FatalColor,
+		zapcore.FatalLevel:  logger.FatalColor,
+		zapcore.PanicLevel:  logger.FatalColor,
 	}
 	consoleEncoderConfig.EncodeLevel = func(l zapcore.Level, pae zapcore.PrimitiveArrayEncoder) {
 		// custom encoding of level string as [INFO] style

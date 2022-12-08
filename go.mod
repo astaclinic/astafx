@@ -3,6 +3,7 @@ module github.com/astaclinic/astafx
 go 1.19
 
 require (
+	github.com/adrg/xdg v0.4.0
 	github.com/fatih/color v1.13.0
 	github.com/getsentry/sentry-go v0.15.0
 	github.com/gin-contrib/zap v0.1.0
