@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-redis/redis/v9"
+	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
 
@@ -12,8 +13,15 @@ var Module = fx.Module("redis",
 )
 
 type RedisConfig struct {
-	Dsn      string `mapstructure:"dsn" yaml:"dsn"  validate:"required,hostname"`
-	Password string `mapstructure:"password" yaml:"password"  validate:"required,printascii"`
+	Dsn      string `mapstructure:"dsn" yaml:"dsn" validate:"required,hostname"`
+	Password string `mapstructure:"password" yaml:"password" validate:"printascii"`
+}
+
+func init() {
+	// config must have a default value for viper to load config from env variables
+	// default value of empty string (zero value) will not pass the "required" config validation
+	viper.SetDefault("redis.dsn", "")
+	viper.SetDefault("redis.password", "")
 }
 
 func New(config *RedisConfig) (*redis.Client, error) {

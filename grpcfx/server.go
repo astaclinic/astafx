@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 
+	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -18,7 +19,13 @@ var Module = fx.Module("grpc",
 )
 
 type GrpcConfig struct {
-	ListenAddr string `mapstructure:"listen_addr" yaml:"listen_addr"  validate:"required,hostname_port"`
+	ListenAddr string `mapstructure:"listen_addr" yaml:"listen_addr" validate:"required,hostname_port"`
+}
+
+func init() {
+	// config must have a default value for viper to load config from env variables
+	// default value of empty string (zero value) will not pass the "required" config validation
+	viper.SetDefault("grpc.listen_addr", ":50051")
 }
 
 func NewGrpcServer() *grpc.Server {

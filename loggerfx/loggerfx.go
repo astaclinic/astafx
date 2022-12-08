@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/fatih/color"
+	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -21,7 +22,13 @@ var Module = fx.Options(
 )
 
 type LoggerConfig struct {
-	Path string `mapstructure:"path" yaml:"path"  validate:"required,dir"`
+	Path string `mapstructure:"path" yaml:"path" validate:"required,dir"`
+}
+
+func init() {
+	// config must have a default value for viper to load config from env variables
+	// default value of empty string (zero value) will not pass the "required" config validation
+	viper.SetDefault("log.path", "/var/log/asta")
 }
 
 func New(config *LoggerConfig) (*zap.SugaredLogger, error) {

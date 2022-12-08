@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
 
@@ -14,7 +15,13 @@ var Module = fx.Module("http",
 )
 
 type HttpConfig struct {
-	ListenAddr string `mapstructure:"listen_addr" yaml:"listen_addr"  required:"required,hostname_port"`
+	ListenAddr string `mapstructure:"listen_addr" yaml:"listen_addr" required:"required,hostname_port"`
+}
+
+func init() {
+	// config must have a default value for viper to load config from env variables
+	// default value of empty string (zero value) will not pass the "required" config validation
+	viper.SetDefault("http.listen_addr", ":8080")
 }
 
 type HttpParams struct {

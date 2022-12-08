@@ -3,13 +3,20 @@ package dbfx
 import (
 	"fmt"
 
+	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type PostgresConfig struct {
-	Dsn string `mapstructure:"dsn" yaml:"dsn"  validate:"required,uri"`
+	Dsn string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
+}
+
+func init() {
+	// config must have a default value for viper to load config from env variables
+	// default value of empty string (zero value) will not pass the "required" config validation
+	viper.SetDefault("postgres.dsn", "")
 }
 
 type Params struct {
