@@ -47,7 +47,7 @@ func RunHttpServer(p RunHttpParams) {
 	p.Lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			go func() {
-				if err := p.HttpServer.ListenAndServe(); err != nil {
+				if err := p.HttpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 					panic(err)
 				}
 			}()
