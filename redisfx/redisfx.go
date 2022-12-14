@@ -13,7 +13,7 @@ var Module = fx.Module("redis",
 )
 
 type RedisConfig struct {
-	Dsn      string `mapstructure:"dsn" yaml:"dsn" validate:"required,hostname"`
+	Dsn      string `mapstructure:"dsn" yaml:"dsn" validate:"required,hostname_port"`
 	Password string `mapstructure:"password" yaml:"password" validate:"printascii"`
 }
 
