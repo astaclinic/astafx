@@ -25,7 +25,7 @@ var Module = fx.Options(
 )
 
 type LoggerConfig struct {
-	Path string `mapstructure:"path" yaml:"path" validate:"required,dir"`
+	Path string `mapstructure:"path" yaml:"path" validate:"required"`
 }
 
 func init() {
