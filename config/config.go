@@ -11,18 +11,26 @@ import (
 	"github.com/astaclinic/astafx/logger"
 )
 
-func InitConfig() {
+func InitConfig(cfgFile string) {
 	packageName := GetPackageName()
 	logger.Infof("Loading config for package %s", packageName)
 
-	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
 
-	viper.AddConfigPath(path.Join("/etc", packageName))
-	for _, configDir := range xdg.ConfigDirs {
-		viper.AddConfigPath(path.Join(configDir, packageName))
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+		logger.Infof("Loading config from %s", cfgFile)
+	} else {
+		viper.SetConfigName("config")
+
+		viper.AddConfigPath(path.Join("/etc", packageName))
+		for _, configDir := range xdg.ConfigDirs {
+			viper.AddConfigPath(path.Join(configDir, packageName))
+		}
+		viper.AddConfigPath(path.Join(xdg.ConfigHome, packageName))
+		viper.AddConfigPath("./config")
+		logger.Infof("Searching config from default paths")
 	}
-	viper.AddConfigPath(path.Join(xdg.ConfigHome, packageName))
-	viper.AddConfigPath("./config")
 
 	// support reading from environmental variables
 	// all env variables are capitalized, dot (levels) and dashes are replaced with underscores
