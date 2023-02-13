@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/fatih/color"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -22,16 +23,56 @@ var Module = fx.Options(
 	fx.WithLogger(func(logger *zap.SugaredLogger) fxevent.Logger {
 		return &fxevent.ZapLogger{Logger: logger.Desugar()}
 	}),
+	fx.Decorate(func(validate *validator.Validate) (*validator.Validate, error) {
+		if err := validate.RegisterValidation("loglevel", validateLogLevel); err != nil {
+			return nil, err
+		}
+		return validate, nil
+	}),
 )
 
+type LogLevel string
+
+var (
+	DebugLevel  = LogLevel(zapcore.DebugLevel.String())
+	InfoLevel   = LogLevel(zapcore.InfoLevel.String())
+	WarnLevel   = LogLevel(zapcore.WarnLevel.String())
+	ErrorLevel  = LogLevel(zapcore.ErrorLevel.String())
+	DPanicLevel = LogLevel(zapcore.DPanicLevel.String())
+	PanicLevel  = LogLevel(zapcore.PanicLevel.String())
+	FatalLevel  = LogLevel(zapcore.FatalLevel.String())
+)
+
+var logLevelMap = map[LogLevel]zapcore.Level{
+	DebugLevel:  zapcore.DebugLevel,
+	InfoLevel:   zapcore.InfoLevel,
+	WarnLevel:   zapcore.WarnLevel,
+	ErrorLevel:  zapcore.ErrorLevel,
+	DPanicLevel: zapcore.DPanicLevel,
+	PanicLevel:  zapcore.PanicLevel,
+	FatalLevel:  zapcore.FatalLevel,
+}
+
+func validateLogLevel(fieldLevel validator.FieldLevel) bool {
+	logLevel := fieldLevel.Field().String()
+	_, ok := logLevelMap[LogLevel(logLevel)]
+	return ok
+}
+
 type LoggerConfig struct {
-	Path string `mapstructure:"path" yaml:"path" validate:"required"`
+	Path  string `mapstructure:"path" yaml:"path" validate:"required"`
+	Level struct {
+		File    LogLevel `mapstructure:"file" yaml:"file" validate:"required,loglevel"`
+		Console LogLevel `mapstructure:"console" yaml:"console" validate:"required,loglevel"`
+	} `mapstructure:"level" yaml:"level" validate:"required"`
 }
 
 func init() {
 	// config must have a default value for viper to load config from env variables
 	// default value of empty string (zero value) will not pass the "required" config validation
 	viper.SetDefault("logs.path", path.Join("/var/log", config.GetPackageName()))
+	viper.SetDefault("logs.level.file", InfoLevel)
+	viper.SetDefault("logs.level.console", InfoLevel)
 }
 
 func New(config *LoggerConfig) (*zap.SugaredLogger, error) {
@@ -47,8 +88,8 @@ func New(config *LoggerConfig) (*zap.SugaredLogger, error) {
 	})
 
 	// setting the log level for file/console log output
-	fileLogLevel := zapcore.InfoLevel // enable if level >= info, can change to any predicate accepting a level argument
-	consoleLogLevel := zapcore.InfoLevel
+	fileLogLevel := logLevelMap[config.Level.File]
+	consoleLogLevel := logLevelMap[config.Level.Console]
 
 	// setup the encoders
 	fileEncoderConfig := zap.NewProductionEncoderConfig()
