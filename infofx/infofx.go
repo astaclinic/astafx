@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"runtime/debug"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -27,8 +28,18 @@ func DisplayInfo(p InfoParams) {
 				hostname = fmt.Sprintf("Fail to get hostname: %v", err)
 			}
 			p.Logger.Infof("       Hostname: %v", hostname)
+			buildInfo, ok := debug.ReadBuildInfo()
+			if !ok {
+				return fmt.Errorf("failed to read build info")
+			}
+			buildCommit := os.Getenv("BUILD_COMMIT")
+			for _, buildSetting := range buildInfo.Settings {
+				if buildSetting.Key == "vcs.revision" {
+					buildCommit = buildSetting.Value
+				}
+			}
 			p.Logger.Infof("     Build Date: %v", os.Getenv("BUILD_DATE"))
-			p.Logger.Infof("   Build Commit: %v", os.Getenv("BUILD_COMMIT"))
+			p.Logger.Infof("   Build Commit: %v", buildCommit)
 			return nil
 		},
 	})
