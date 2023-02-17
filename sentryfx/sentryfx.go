@@ -10,7 +10,10 @@ import (
 )
 
 type SentryConfig struct {
-	Dsn string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
+	Dsn         string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
+	Release     string `mapstructure:"release" yaml:"release" validate:"required"`
+	Environment string `mapstructure:"environment" yaml:"environment" validate:"required"`
+	Debug       bool   `mapstructure:"debug" yaml:"debug" validate:"required"`
 }
 
 func init() {
@@ -23,7 +26,10 @@ func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {
 	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			return sentry.Init(sentry.ClientOptions{
-				Dsn: config.Dsn,
+				Dsn:         config.Dsn,
+				Release:     config.Release,
+				Environment: config.Environment,
+				Debug:       config.Debug,
 			})
 		},
 		OnStop: func(ctx context.Context) error {
