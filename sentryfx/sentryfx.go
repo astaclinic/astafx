@@ -23,8 +23,6 @@ func init() {
 	// config must have a default value for viper to load config from env variables
 	// default value of empty string (zero value) will not pass the "required" config validation
 	viper.SetDefault("sentry.dsn", "")
-	viper.SetDefault("sentry.release", Release)
-	viper.SetDefault("sentry.environment", Environment)
 }
 
 func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {
