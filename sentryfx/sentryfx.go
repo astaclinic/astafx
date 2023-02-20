@@ -11,8 +11,8 @@ import (
 
 type SentryConfig struct {
 	Dsn         string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
-	Release     string `mapstructure:"release" yaml:"release" validate:"required"`
-	Environment string `mapstructure:"environment" yaml:"environment" validate:"required"`
+	Release     string `mapstructure:"RELEASE" yaml:"release"`
+	Environment string `mapstructure:"ENVIRONMENT" yaml:"environment"`
 	Debug       bool   `mapstructure:"debug" yaml:"debug"`
 }
 
