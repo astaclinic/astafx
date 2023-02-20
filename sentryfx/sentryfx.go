@@ -13,7 +13,7 @@ type SentryConfig struct {
 	Dsn         string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
 	Release     string `mapstructure:"release" yaml:"release" validate:"required"`
 	Environment string `mapstructure:"environment" yaml:"environment" validate:"required"`
-	Debug       bool   `mapstructure:"debug" yaml:"debug" validate:"required"`
+	Debug       bool   `mapstructure:"debug" yaml:"debug"`
 }
 
 func init() {
