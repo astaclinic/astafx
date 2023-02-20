@@ -11,8 +11,8 @@ import (
 
 type SentryConfig struct {
 	Dsn         string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
-	Release     string `mapstructure:"RELEASE" yaml:"release"`
-	Environment string `mapstructure:"ENVIRONMENT" yaml:"environment"`
+	Release     string `mapstructure:"release" yaml:"release"`
+	Environment string `mapstructure:"environment" yaml:"environment"`
 	Debug       bool   `mapstructure:"debug" yaml:"debug"`
 }
 
@@ -20,6 +20,8 @@ func init() {
 	// config must have a default value for viper to load config from env variables
 	// default value of empty string (zero value) will not pass the "required" config validation
 	viper.SetDefault("sentry.dsn", "")
+	viper.SetDefault("sentry.release", "")
+	viper.SetDefault("sentry.environment", "")
 }
 
 func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {
