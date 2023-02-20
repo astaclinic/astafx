@@ -9,19 +9,20 @@ import (
 	"go.uber.org/fx"
 )
 
+var (
+	Release     = "testing"
+	Environment = "testing"
+)
+
 type SentryConfig struct {
-	Dsn         string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
-	Release     string `mapstructure:"release" yaml:"release"`
-	Environment string `mapstructure:"environment" yaml:"environment"`
-	Debug       bool   `mapstructure:"debug" yaml:"debug"`
+	Dsn   string `mapstructure:"dsn" yaml:"dsn" validate:"required,uri"`
+	Debug bool   `mapstructure:"debug" yaml:"debug"`
 }
 
 func init() {
 	// config must have a default value for viper to load config from env variables
 	// default value of empty string (zero value) will not pass the "required" config validation
 	viper.SetDefault("sentry.dsn", "")
-	viper.SetDefault("sentry.release", "")
-	viper.SetDefault("sentry.environment", "")
 }
 
 func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {
@@ -29,8 +30,8 @@ func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {
 		OnStart: func(ctx context.Context) error {
 			return sentry.Init(sentry.ClientOptions{
 				Dsn:         config.Dsn,
-				Release:     config.Release,
-				Environment: config.Environment,
+				Release:     Release,
+				Environment: Environment,
 				Debug:       config.Debug,
 			})
 		},
