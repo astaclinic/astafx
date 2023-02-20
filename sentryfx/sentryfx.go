@@ -2,7 +2,6 @@ package sentryfx
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"github.com/getsentry/sentry-go"
@@ -21,23 +20,17 @@ func init() {
 	// config must have a default value for viper to load config from env variables
 	// default value of empty string (zero value) will not pass the "required" config validation
 	viper.SetDefault("sentry.dsn", "")
+	viper.SetDefault("sentry.release", "")
+	viper.SetDefault("sentry.environment", "")
 }
 
 func RunSentry(lifecycle fx.Lifecycle, config *SentryConfig) {
 	lifecycle.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			release, e1 := os.LookupEnv("RELEASE")
-			if !e1 {
-				release = config.Release
-			}
-			env, e2 := os.LookupEnv("ENVIRONMENT")
-			if !e2 {
-				release = config.Environment
-			}
 			return sentry.Init(sentry.ClientOptions{
 				Dsn:         config.Dsn,
-				Release:     release,
-				Environment: env,
+				Release:     config.Release,
+				Environment: config.Environment,
 				Debug:       config.Debug,
 			})
 		},
