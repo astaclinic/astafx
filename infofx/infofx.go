@@ -11,6 +11,10 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	BuildDate = ""
+)
+
 type InfoParams struct {
 	fx.In
 	Lifecycle fx.Lifecycle
@@ -38,7 +42,7 @@ func DisplayInfo(p InfoParams) {
 					buildCommit = buildSetting.Value
 				}
 			}
-			p.Logger.Infof("     Build Date: %v", os.Getenv("BUILD_DATE"))
+			p.Logger.Infof("     Build Date: %v", BuildDate)
 			p.Logger.Infof("   Build Commit: %v", buildCommit)
 			return nil
 		},
