@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	Release     = ""
-	Environment = ""
+	Release     string
+	Environment string
 )
 
 type SentryConfig struct {
