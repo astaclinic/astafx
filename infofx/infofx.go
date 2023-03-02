@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	BuildDate = ""
+	BuildDate string
 )
 
 type InfoParams struct {
