@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	BuildDate = ""
+	BuildDate = os.Getenv("BUILD_DATE")
 )
 
 type InfoParams struct {
