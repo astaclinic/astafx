@@ -2,7 +2,6 @@ package sentryfx
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"github.com/getsentry/sentry-go"
@@ -11,8 +10,8 @@ import (
 )
 
 var (
-	Release     = os.Getenv("RELEASE")
-	Environment = os.Getenv("ENVIRONMENT")
+	Release     = ""
+	Environment = ""
 )
 
 type SentryConfig struct {
