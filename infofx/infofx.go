@@ -2,11 +2,8 @@ package infofx
 
 import (
 	"context"
-	"fmt"
-	"os"
-	"runtime"
-	"runtime/debug"
 
+	"github.com/astaclinic/astafx/info"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -25,25 +22,11 @@ func DisplayInfo(p InfoParams) {
 	p.Lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			p.Logger.Info("Starting application:")
-			p.Logger.Infof(" Golang Version: %v", runtime.Version())
-			p.Logger.Infof("       Platform: %v %v", runtime.GOOS, runtime.GOARCH)
-			hostname, err := os.Hostname()
+			info, err := info.GetInfo()
 			if err != nil {
-				hostname = fmt.Sprintf("Fail to get hostname: %v", err)
+				return err
 			}
-			p.Logger.Infof("       Hostname: %v", hostname)
-			buildInfo, ok := debug.ReadBuildInfo()
-			if !ok {
-				return fmt.Errorf("failed to read build info")
-			}
-			buildCommit := os.Getenv("BUILD_COMMIT")
-			for _, buildSetting := range buildInfo.Settings {
-				if buildSetting.Key == "vcs.revision" {
-					buildCommit = buildSetting.Value
-				}
-			}
-			p.Logger.Infof("     Build Date: %v", BuildDate)
-			p.Logger.Infof("   Build Commit: %v", buildCommit)
+			p.Logger.Info("\n" + info)
 			return nil
 		},
 	})
