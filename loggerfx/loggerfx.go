@@ -23,13 +23,15 @@ var Module = fx.Options(
 	fx.WithLogger(func(logger *zap.SugaredLogger) fxevent.Logger {
 		return &fxevent.ZapLogger{Logger: logger.Desugar()}
 	}),
-	fx.Decorate(func(validate *validator.Validate) (*validator.Validate, error) {
-		if err := validate.RegisterValidation("loglevel", validateLogLevel); err != nil {
-			return nil, err
-		}
-		return validate, nil
-	}),
+	fx.Decorate(RegisterLogLevelValidation),
 )
+
+func RegisterLogLevelValidation(validate *validator.Validate) (*validator.Validate, error) {
+	if err := validate.RegisterValidation("loglevel", validateLogLevel); err != nil {
+		return nil, err
+	}
+	return validate, nil
+}
 
 type LogLevel string
 
