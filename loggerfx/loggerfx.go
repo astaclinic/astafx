@@ -55,7 +55,7 @@ var logLevelMap = map[LogLevel]zapcore.Level{
 	FatalLevel:  zapcore.FatalLevel,
 }
 
-func ValidateLogLevel(fieldLevel validator.FieldLevel) bool {
+func validateLogLevel(fieldLevel validator.FieldLevel) bool {
 	logLevel := fieldLevel.Field().String()
 	_, ok := logLevelMap[LogLevel(logLevel)]
 	return ok
