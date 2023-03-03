@@ -27,7 +27,7 @@ var Module = fx.Options(
 )
 
 func RegisterLogLevelValidation(validate *validator.Validate) (*validator.Validate, error) {
-	if err := validate.RegisterValidation("loglevel", ValidateLogLevel); err != nil {
+	if err := validate.RegisterValidation("loglevel", validateLogLevel); err != nil {
 		return nil, err
 	}
 	return validate, nil
@@ -55,7 +55,7 @@ var logLevelMap = map[LogLevel]zapcore.Level{
 	FatalLevel:  zapcore.FatalLevel,
 }
 
-func ValidateLogLevel(fieldLevel validator.FieldLevel) bool {
+func validateLogLevel(fieldLevel validator.FieldLevel) bool {
 	logLevel := fieldLevel.Field().String()
 	_, ok := logLevelMap[LogLevel(logLevel)]
 	return ok
