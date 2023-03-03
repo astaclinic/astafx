@@ -26,7 +26,12 @@ func DisplayInfo(p InfoParams) {
 			if err != nil {
 				return err
 			}
-			p.Logger.Info("\n" + info)
+			p.Logger.Info(info.Name)
+			p.Logger.Info(info.Platform)
+			p.Logger.Info(info.Runtime)
+			p.Logger.Info(info.HostName)
+			p.Logger.Info(info.BuildCommit)
+			p.Logger.Info(info.BuildDate)
 			return nil
 		},
 	})
