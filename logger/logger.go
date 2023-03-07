@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/fatih/color"
@@ -60,10 +61,12 @@ func Warnf(format string, a ...any) error {
 	return Warn(fmt.Sprintf(format, a...))
 }
 
-func Fatal(message string) error {
-	return Log(FatalLevel, message)
+func Fatal(message string) {
+	Log(FatalLevel, message)
+	os.Exit(1)
 }
 
-func Fatalf(format string, a ...any) error {
-	return Fatal(fmt.Sprintf(format, a...))
+func Fatalf(format string, a ...any) {
+	Fatal(fmt.Sprintf(format, a...))
+	os.Exit(1)
 }
