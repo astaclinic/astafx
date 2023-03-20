@@ -222,6 +222,8 @@ func main() {
 }
 ```
 
+`fx.Invoke` is useful for adding hooks or registering handlers. We will come back to this in later sections.
+
 ### Interface Types
 
 For interface type, note that the dependencies are match with their interface type but not their underlying type. 
@@ -359,6 +361,7 @@ func NewHTTPServer() *http.Server {
 	}
 }
 
+// RunHttpServer appends http server startup and shutdown hooks to Fx lifecycle 
 func RunHttpServer(srv *http.Server, lc fx.Lifecycle) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
@@ -412,11 +415,119 @@ Finally, the `OnStop` hook is executed after receiving an interrupt signal.
 
 ### Minimal HTTP Server with Fx
 
+Below shows a full example of a minimal HTTP server with a single route.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"net"
+	"net/http"
+
+	"go.uber.org/fx"
+)
+
+// pingHandler implements http.Handler
+type pingHandler struct{}
+
+// ServeHttp handles an HTTP request to respond a pong message
+func (pingHandler *pingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("pong!"))
+	if err != nil {
+		fmt.Printf("failed to serve request: %v\n", r)
+	}
+}
+
+// NewPingHandler builds a new pingHandler
+// note that the return type is http.Handler but not *pingHandler
+func NewPingHandler() http.Handler {
+	return &pingHandler{}
+}
+
+// NewServeMux builds a ServeMux that will route requests to handlers
+func NewServeMux(handler http.Handler) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("/ping", handler)
+	return mux
+}
+
+func NewHTTPServer(mux *http.ServeMux) *http.Server {
+	return &http.Server{
+		Addr:    ":8080",
+		Handler: mux,
+	}
+}
+
+func RunHttpServer(srv *http.Server, lc fx.Lifecycle) {
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			ln, err := net.Listen("tcp", srv.Addr)
+			if err != nil {
+				return err
+			}
+			go func() {
+				err := srv.Serve(ln)
+				if err != nil && err != http.ErrServerClosed {
+					panic(err)
+				}
+			}()
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			return srv.Shutdown(ctx)
+		},
+	})
+}
+
+func main() {
+	app := fx.New(
+		fx.Provide(
+			NewPingHandler,
+			NewServeMux,
+			NewHTTPServer,
+		),
+		fx.Invoke(RunHttpServer),
+	)
+	app.Run()
+}
+```
+
+Here, we implemented a HTTP handler and injected it into a `http.ServeMux` for serving. 
+
 ## Advanced Fx Use Cases
 
 ### Decorators
 
 ### Modules
+
+Module is a named group of zero or more `fx.Option`. In the example below, `http` related options and `logger` related
+options are grouped in different module.
+
+```go
+
+app := fx.New(
+	fx.Module("logger",
+        fx.Provide(NewLogger),
+        fx.Invoke(LogOnStart),
+	),
+	fx.Module("http",
+        fx.Provide(
+            NewPingHandler,
+            NewServeMux,
+            NewHTTPServer,
+        ),
+        fx.Invoke(RunHttpServer),
+	),
+)
+app.Run()
+```
+
+Only difference of putting options in modules is that `fx.Invoke` and `fx.Decorate` are scoped inside the module. You
+may use `fx.Options` for a non-scoped version of `fx.Module`.
+
 
 ### Parameter object and Result object
 
